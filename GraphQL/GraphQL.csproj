@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <RootNamespace>ConferencePlanner.GraphQL</RootNamespace>
+    <NoWarn>GD0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
