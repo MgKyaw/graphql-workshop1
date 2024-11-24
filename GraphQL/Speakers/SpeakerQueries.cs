@@ -3,11 +3,11 @@ using GreenDonut.Selectors;
 using HotChocolate.Execution.Processing;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConferencePlanner.GraphQL;
+namespace ConferencePlanner.GraphQL.Speakers;
 
-public static class Queries
+[QueryType]
+public static class SpeakerQueries
 {
-    [Query]
     public static async Task<IEnumerable<Speaker>> GetSpeakersAsync(
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken)
@@ -15,14 +15,12 @@ public static class Queries
         return await dbContext.Speakers.AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    [Query]
     public static async Task<Speaker?> GetSpeakerAsync(
-    int id,
-    ISpeakerByIdDataLoader speakerById,
-    ISelection selection,
-    CancellationToken cancellationToken)
+        int id,
+        ISpeakerByIdDataLoader speakerById,
+        ISelection selection,
+        CancellationToken cancellationToken)
     {
         return await speakerById.Select(selection).LoadAsync(id, cancellationToken);
     }
-
 }
