@@ -11,6 +11,8 @@ builder.Services
     .AddMutationConventions()
     .AddDbContextCursorPagingProvider()
     .AddPagingArguments()
+    .AddFiltering()
+    .AddSorting()
     .AddGraphQLTypes();
 
 var app = builder.Build();
