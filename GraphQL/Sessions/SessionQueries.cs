@@ -12,6 +12,8 @@ namespace ConferencePlanner.GraphQL.Sessions;
 public static class SessionQueries
 {
     [UsePaging]
+    [UseFiltering]
+    [UseSorting]
     public static IQueryable<Session> GetSessions(ApplicationDbContext dbContext)
     {
         return dbContext.Sessions.AsNoTracking().OrderBy(s => s.Title).ThenBy(s => s.Id);
