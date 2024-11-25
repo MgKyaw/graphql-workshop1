@@ -1,5 +1,6 @@
 using ConferencePlanner.GraphQL.Data;
 using GreenDonut.Selectors;
+using HotChocolate.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConferencePlanner.GraphQL.Tracks;
@@ -21,16 +22,18 @@ public static class TrackDataLoaders
     }
 
     [DataLoader]
-    public static async Task<IReadOnlyDictionary<int, Session[]>> SessionsByTrackIdAsync(
-        IReadOnlyList<int> trackIds,
-        ApplicationDbContext dbContext,
-        ISelectorBuilder selector,
-        CancellationToken cancellationToken)
+    public static async Task<IReadOnlyDictionary<int, Page<Session>>> SessionsByTrackIdAsync(
+    IReadOnlyList<int> trackIds,
+    ApplicationDbContext dbContext,
+    ISelectorBuilder selector,
+    PagingArguments pagingArguments,
+    CancellationToken cancellationToken)
     {
-        return await dbContext.Tracks
+        return await dbContext.Sessions
             .AsNoTracking()
-            .Where(t => trackIds.Contains(t.Id))
-            .Select(t => t.Id, t => t.Sessions, selector)
-            .ToDictionaryAsync(r => r.Key, r => r.Value.ToArray(), cancellationToken);
+            .Where(s => s.TrackId != null && trackIds.Contains((int)s.TrackId))
+            .OrderBy(s => s.Id)
+            .Select(s => s.TrackId, selector)
+            .ToBatchPageAsync(s => (int)s.TrackId!, pagingArguments, cancellationToken);
     }
 }
