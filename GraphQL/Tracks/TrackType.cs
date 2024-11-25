@@ -1,20 +1,26 @@
 using ConferencePlanner.GraphQL.Data;
 using GreenDonut.Selectors;
 using HotChocolate.Execution.Processing;
+using HotChocolate.Pagination;
+using HotChocolate.Types.Pagination;
 
 namespace ConferencePlanner.GraphQL.Tracks;
 
 [ObjectType<Track>]
 public static partial class TrackType
 {
-    public static async Task<IEnumerable<Session>> GetSessionsAsync(
-        [Parent] Track track,
-        ISessionsByTrackIdDataLoader sessionsByTrackId,
-        ISelection selection,
-        CancellationToken cancellationToken)
+    [UsePaging]
+    public static async Task<Connection<Session>> GetSessionsAsync(
+    [Parent] Track track,
+    ISessionsByTrackIdDataLoader sessionsByTrackId,
+    PagingArguments pagingArguments,
+    ISelection selection,
+    CancellationToken cancellationToken)
     {
         return await sessionsByTrackId
+            .WithPagingArguments(pagingArguments)
             .Select(selection)
-            .LoadRequiredAsync(track.Id, cancellationToken);
+            .LoadAsync(track.Id, cancellationToken)
+            .ToConnectionAsync();
     }
 }
