@@ -10,6 +10,7 @@ builder.Services
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
     .AddDbContextCursorPagingProvider()
+    .AddPagingArguments()
     .AddGraphQLTypes();
 
 var app = builder.Build();
