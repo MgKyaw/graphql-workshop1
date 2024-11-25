@@ -1,6 +1,9 @@
 using ConferencePlanner.GraphQL.Data;
 using GreenDonut.Selectors;
 using HotChocolate.Execution.Processing;
+using HotChocolate.Pagination;
+using HotChocolate.Types.Pagination;
+using ConferencePlanner.GraphQL.Tracks;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConferencePlanner.GraphQL.Sessions;
@@ -8,11 +11,10 @@ namespace ConferencePlanner.GraphQL.Sessions;
 [QueryType]
 public static class SessionQueries
 {
-    public static async Task<IEnumerable<Session>> GetSessionsAsync(
-        ApplicationDbContext dbContext,
-        CancellationToken cancellationToken)
+    [UsePaging]
+    public static IQueryable<Session> GetSessions(ApplicationDbContext dbContext)
     {
-        return await dbContext.Sessions.AsNoTracking().ToListAsync(cancellationToken);
+        return dbContext.Sessions.AsNoTracking().OrderBy(s => s.Title).ThenBy(s => s.Id);
     }
 
     [NodeResolver]
